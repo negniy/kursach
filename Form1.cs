@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace WindowsFormsApp1
 {
@@ -17,43 +18,64 @@ namespace WindowsFormsApp1
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void UpdateBackUpInfo() // вывод информации о бэкапах
         {
-            string path_from_create_backup = null;
-            string path_to_create_backup = null;
-
-            FolderBrowserDialog DirDialog = new FolderBrowserDialog(); // выбор папки
-            DirDialog.Description = "Выбор директории откуда";
-            DirDialog.SelectedPath = @"С:\";
-            if (DirDialog.ShowDialog() == DialogResult.OK)
+            textBox1.Text = " ";
+            int counter = 1;
+            foreach (BackUp bu in list_of_backups)
             {
-                path_from_create_backup = DirDialog.SelectedPath;
+                textBox1.Text += " "+counter.ToString()+") "+"Источник данных: " + bu.get_sourse_of_backup() + " Расположение бэкапа: " + bu.get_destination_of_backup() + " Последнее копирование: " + bu.get_time_of_last_backup()+"\r\n";
+                counter++;
             }
-
-            FolderBrowserDialog DirDialog1 = new FolderBrowserDialog(); // выбор папки
-            DirDialog1.Description = "Выбор директории куда";
-            DirDialog1.SelectedPath = @"С:\";
-            if (DirDialog1.ShowDialog() == DialogResult.OK)
-            {
-                path_to_create_backup = DirDialog1.SelectedPath;
-            }
-
-            CreateBackUp(path_from_create_backup, path_to_create_backup);
+             
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e) // создание бэкпапа
         {
-            
+            Form2 f = new Form2(); // создаем новое окно
+            f.ShowDialog(); // ждём выполнения
+            BackUp bu = new BackUp();
+            bu.set_time_between_backup(f.get_time_to_create_backup());
+            bu.set_time_of_last_backup(DateTime.Now);
+            bu.set_sourse_of_backup(f.get_path_from_create_backup());
+            bu.set_destination_of_backup(f.get_path_to_create_backup());
+
+            CreateBackUp(bu);
+
+            UpdateBackUpInfo();
         }
 
-        private void toolStripLabel1_Click(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e) // загрузка формы
         {
-
+            list_of_backups = new List<BackUp>();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e) // удаление бэкапа
         {
+            if (list_of_backups.Count == 0) return;
+            Form3 f = new Form3();
+            f.set_range(list_of_backups.Count);
+            f.ShowDialog();
+            // удалить папку
+            list_of_backups.RemoveAt(f.get_selected_index());
+            UpdateBackUpInfo();
+        }
 
+        private void button4_Click(object sender, EventArgs e) // удаление всех бэкапов
+        {
+            // удалить папки
+            list_of_backups.Clear();
+            UpdateBackUpInfo();
+        }
+
+        private void button5_Click(object sender, EventArgs e) // изменение бэкпапа
+        {
+            if (list_of_backups.Count == 0) return;
+            Form3 f = new Form3();
+            f.set_range(list_of_backups.Count);
+            f.ShowDialog();
+            // инменить
+            UpdateBackUpInfo();
         }
     }
 }
