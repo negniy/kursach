@@ -326,11 +326,10 @@ namespace WindowsFormsApp1
         {
             int index = list_of_backups.IndexOf(bu);
             if (index == -1) return;
-            string path_to_folder = Path.Combine(bu.get_destination_of_backup(), "\\BackUp_"+ bu.get_counter_of_backup().ToString());
-            path_to_folder = path_to_folder.Replace('.', '-');
-            path_to_folder = path_to_folder.Replace(' ', '_');
-            path_to_folder = path_to_folder.Replace(':', '-');
-            if (!Directory.Exists(path_to_folder)) Directory.CreateDirectory(path_to_folder);
+
+            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_"+bu.get_counter_of_backup()+"_" + index.ToString();
+            Directory.CreateDirectory(path_to_folder);
+            list_of_backups[index].inc_counter_of_backup();
             CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
             MessageBox.Show(index.ToString());
             list_of_backups[index].set_time_of_last_backup(DateTime.Now);
@@ -346,7 +345,6 @@ namespace WindowsFormsApp1
         private Button button4;
         private Button button5;
         private NotifyIcon notify_icon;
-        private bool is_ui_work;
         private BackgroundWorker worker;
     }
 }

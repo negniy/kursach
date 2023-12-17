@@ -31,7 +31,7 @@ namespace WindowsFormsApp1
                 {
                     foreach (BackUp bu in list_of_backups)
                     {
-                        var last_modified = File.GetLastWriteTime(bu.get_sourse_of_backup());
+                        var last_modified = DateTime.Now;// File.GetLastWriteTime(bu.get_sourse_of_backup());
                         var variance = last_modified.Subtract(bu.get_time_of_last_backup());
                         var result = TimeSpan.Compare(variance, bu.get_time_between_backup());
                         if (result >= 0)
@@ -41,7 +41,7 @@ namespace WindowsFormsApp1
                     }
                 }
                 SerializeBackUpInfo();
-                // System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(1000*60);
                 if (worker.CancellationPending) return;
             }
 
@@ -50,6 +50,7 @@ namespace WindowsFormsApp1
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             MessageBox.Show("рк не обновляются");
+
         }
 
         private void notify_icon_Click(object Sender, EventArgs e)
@@ -60,6 +61,7 @@ namespace WindowsFormsApp1
             }
             // Activate the form.
             this.Activate();
+            ShowBackUpInfo();
         }
 
         private void Form1_Deactivate(object sender, EventArgs e) 
@@ -69,7 +71,6 @@ namespace WindowsFormsApp1
                 ShowInTaskbar = false;
                 notify_icon.Visible = true;
             }
-            // worker.RunWorkerAsync();
         }
 
         private void button1_Click(object sender, EventArgs e) // создание бэкпапа
@@ -89,7 +90,6 @@ namespace WindowsFormsApp1
 
         private void Form1_Load(object sender, EventArgs e) // загрузка формы
         {
-            worker.CancelAsync();
             if (DeserializeBackUpInfo() == null) 
             { 
                 list_of_backups = new List<BackUp>();
