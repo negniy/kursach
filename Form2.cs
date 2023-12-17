@@ -16,6 +16,15 @@ namespace WindowsFormsApp1
         public Form2()
         {
             InitializeComponent();
+            path_from_create_backup = null;
+            path_to_create_backup = null;
+        }
+        public Form2(string path_sourse, string path_dest, TimeSpan time)
+        {
+            InitializeComponent();
+            path_from_create_backup = path_sourse;
+            path_to_create_backup = path_dest;
+            time_to_create_backup = time;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -58,11 +67,23 @@ namespace WindowsFormsApp1
             comboBox1.Items.Add("3 дн");
             comboBox1.Items.Add("7 дн");
             comboBox1.Items.Add("1 мec");
-
             this.Controls.Add(comboBox1);
-            textBox2.Text = "Путь не выбран";
-            textBox3.Text = "Время не задано";
-            textBox1.Text = "Путь не выбран";
+
+            if (path_from_create_backup != null)
+            {
+                textBox1.Text = path_from_create_backup;
+            }
+            else { textBox1.Text = "Путь не выбран"; }
+            if (path_to_create_backup != null)
+            {
+                textBox2.Text = path_to_create_backup;
+            }
+            else { textBox2.Text = "Путь не выбран"; }
+            if (time_to_create_backup != null)
+            {
+                textBox3.Text = time_to_create_backup.ToString();
+            }
+            else { textBox3.Text = "Время не задано"; }
         }
 
         private void button1_Click(object sender, EventArgs e)

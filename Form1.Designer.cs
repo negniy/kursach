@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
@@ -17,23 +17,27 @@ namespace WindowsFormsApp1
         /// Обязательная переменная конструктора.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private class BackUp
+
+        public class BackUp
         {
+            [JsonProperty]
             private string sourse_of_backup;
+            [JsonProperty]
             private string destination_of_backup;
-            private string finc_of_backup;
-            private string sinc_of_backup;
+            [JsonProperty]
             private DateTime time_of_last_backup;
+            [JsonProperty]
             private TimeSpan time_between_backup;
+            [JsonProperty]
+            private int counter_of_backup;
 
             public BackUp()
             {
                 sourse_of_backup = null;
                 destination_of_backup = null;
-                finc_of_backup = null;
-                sinc_of_backup = null;
                 time_of_last_backup = new DateTime();
                 time_between_backup = new TimeSpan(0,0,0,0);
+                counter_of_backup = 0;
             }
 
             public DateTime get_time_of_last_backup()
@@ -54,16 +58,6 @@ namespace WindowsFormsApp1
             public string get_destination_of_backup()
             {
                 return destination_of_backup;
-            }
-
-            public string get_finc_of_backup()
-            {
-                return finc_of_backup;
-            }
-
-            public string get_sinc_of_backup()
-            {
-                return sinc_of_backup;
             }
 
             public void set_time_of_last_backup(DateTime time)
@@ -90,31 +84,22 @@ namespace WindowsFormsApp1
             {
                 if (!Directory.Exists(str) || !File.Exists(str))
                 {
-                    //throw new Exception("No such a file or directory");
+                    //throw new Exception("No suci a file or directory");
                 }
 
                 destination_of_backup = str;
             }
 
-            public void set_finc_of_backup(string str = null)
+            public void inc_counter_of_backup()
             {
-                if (!Directory.Exists(str) || !File.Exists(str))
-                {
-                    throw new Exception("No such a file or directory");
-                }
-
-                finc_of_backup = str;
+                counter_of_backup++;
             }
 
-            public void set_sinc_of_backup(string str = null)
+            public int get_counter_of_backup()
             {
-                if (!Directory.Exists(str) || !File.Exists(str))
-                {
-                    throw new Exception("No such a file or directory");
-                }
-
-                sinc_of_backup = str;
+                return counter_of_backup;
             }
+
         }
 
         /// <summary>
@@ -139,6 +124,7 @@ namespace WindowsFormsApp1
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -146,6 +132,8 @@ namespace WindowsFormsApp1
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
+            this.notify_icon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.worker = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // button1
@@ -212,9 +200,21 @@ namespace WindowsFormsApp1
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(491, 32);
             this.button5.TabIndex = 16;
-            this.button5.Text = "Изменить настройки бэкапа\r\n";
+            this.button5.Text = "Бэкапы";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // notify_icon
+            // 
+            this.notify_icon.Text = "BackUpApp";
+            this.notify_icon.Visible = true;
+            this.notify_icon.Click += new System.EventHandler(this.notify_icon_Click);
+            // 
+            // worker
+            // 
+            this.worker.WorkerSupportsCancellation = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.worker_DoWork);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
             // 
             // Form1
             // 
@@ -230,6 +230,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "Приложуха";
+            this.Deactivate += new System.EventHandler(this.Form1_Deactivate);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -237,6 +238,44 @@ namespace WindowsFormsApp1
         }
 
         #endregion
+
+        private void SerializeBackUpInfo() // сериализует данные бэкапов в json
+        {
+            string path_to_app_dir = "C:\\BackUp_Application";
+            if (!Directory.Exists(path_to_app_dir))
+            {
+                Directory.CreateDirectory(path_to_app_dir);
+            }
+            string file_name = Path.Combine(path_to_app_dir, "BackUps.json");
+            var backup_data = JsonConvert.SerializeObject(list_of_backups, Formatting.Indented);
+            File.WriteAllText(file_name, backup_data);
+        }
+
+        private List<BackUp> DeserializeBackUpInfo() // десериализует данные бэкапов из json
+        {
+            string path_to_app_dir = "C:\\BackUp_Application";
+            string file_name = Path.Combine(path_to_app_dir, "BackUps.json");
+            if (!Directory.Exists(path_to_app_dir)||!File.Exists(file_name))
+            {
+                return null;
+            }
+            var json_data = File.ReadAllText(file_name);
+            List<BackUp> backup_data = JsonConvert.DeserializeObject<List<BackUp>>(json_data);
+            return backup_data;
+        }
+
+        private void ShowBackUpInfo() // вывод информации о бэкапах
+        {
+            textBox1.Text = " ";
+            int counter = 1;
+            if (list_of_backups == null) return;
+            foreach (BackUp bu in list_of_backups)
+            {
+                textBox1.Text += " " + counter.ToString() + ") " + "Источник данных: " + bu.get_sourse_of_backup() + " Расположение бэкапа: " + bu.get_destination_of_backup() + " Последнее копирование: " + bu.get_time_of_last_backup() + "\r\n";
+                counter++;
+            }
+        }
+
         private void CopyFolder(string sourse, string dest)
         {
             string[] files = Directory.GetFiles(sourse);
@@ -259,11 +298,43 @@ namespace WindowsFormsApp1
                 //throw new Exception("No such a file or directory");
             }
 
-            CopyFolder(bu.get_sourse_of_backup(), bu.get_destination_of_backup());
+            // проверка на существование
+            list_of_backups.Add(bu);
+            int index = list_of_backups.IndexOf(bu);
+            string path_to_folder = bu.get_destination_of_backup()+"\\BackUp_0_"+index.ToString();
+            Directory.CreateDirectory(path_to_folder);
+            list_of_backups[index].inc_counter_of_backup();
+            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
 
             MessageBox.Show("РК завершено");
-            list_of_backups.Add(bu);
+            SerializeBackUpInfo();
 
+        }
+
+        private void UpdateBackUp(BackUp bu)
+        {
+            int index = list_of_backups.IndexOf(bu);
+            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_" + bu.get_counter_of_backup().ToString() + "_" + index.ToString();
+            Directory.CreateDirectory(path_to_folder);
+            list_of_backups[index].inc_counter_of_backup();
+            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
+            list_of_backups[index].set_time_of_last_backup(DateTime.Now);
+            SerializeBackUpInfo();
+        }
+
+        private void RefreshBackUp(BackUp bu)
+        {
+            int index = list_of_backups.IndexOf(bu);
+            if (index == -1) return;
+            string path_to_folder = Path.Combine(bu.get_destination_of_backup(), "\\BackUp_"+ bu.get_counter_of_backup().ToString());
+            path_to_folder = path_to_folder.Replace('.', '-');
+            path_to_folder = path_to_folder.Replace(' ', '_');
+            path_to_folder = path_to_folder.Replace(':', '-');
+            if (!Directory.Exists(path_to_folder)) Directory.CreateDirectory(path_to_folder);
+            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
+            MessageBox.Show(index.ToString());
+            list_of_backups[index].set_time_of_last_backup(DateTime.Now);
+            SerializeBackUpInfo();
         }
 
         private System.Windows.Forms.Button button1;
@@ -274,6 +345,9 @@ namespace WindowsFormsApp1
         private Button button2;
         private Button button4;
         private Button button5;
+        private NotifyIcon notify_icon;
+        private bool is_ui_work;
+        private BackgroundWorker worker;
     }
 }
 
