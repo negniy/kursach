@@ -22,7 +22,7 @@ namespace WindowsFormsApp1
             worker.RunWorkerAsync(); // запускаем фоном задачу
         }
 
-        void worker_DoWork(object sender, DoWorkEventArgs e)
+        void worker_DoWork(object sender, DoWorkEventArgs e) // асинхронный процесс
         {
             while (true)
             {
@@ -42,18 +42,17 @@ namespace WindowsFormsApp1
                 }
                 SerializeBackUpInfo();
                 System.Threading.Thread.Sleep(1000*60);
-                if (worker.CancellationPending) return;
             }
 
         }
 
-        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) // заканчивание асинхронного процесса
         {
             MessageBox.Show("рк не обновляются");
 
         }
 
-        private void notify_icon_Click(object Sender, EventArgs e)
+        private void notify_icon_Click(object Sender, EventArgs e) // клик на иконку в трее
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
@@ -64,7 +63,7 @@ namespace WindowsFormsApp1
             ShowBackUpInfo();
         }
 
-        private void Form1_Deactivate(object sender, EventArgs e) 
+        private void Form1_Deactivate(object sender, EventArgs e) // сворачивание формы
         {
             if (WindowState == FormWindowState.Minimized) // если свернуто
             {
@@ -127,7 +126,7 @@ namespace WindowsFormsApp1
             ShowBackUpInfo();
         }
 
-        private void button5_Click(object sender, EventArgs e) // изменение бэкпапа
+        private void button5_Click(object sender, EventArgs e) // изменение/просмотр бэкпапа
         {
             if (list_of_backups.Count == 0) return;
 
@@ -152,6 +151,28 @@ namespace WindowsFormsApp1
             if (worker.IsBusy) worker.CancelAsync();
             UpdateBackUp(bu);
 
+            ShowBackUpInfo();
+        }
+
+        private void button3_Click(object sender, EventArgs e) // восстановление
+        {
+            if (list_of_backups.Count == 0) return;
+
+            List<string> list_path = new List<string>();
+            foreach (BackUp b in list_of_backups)
+            {
+                list_path.Add(b.get_destination_of_backup());
+            }
+
+            Form3 f = new Form3(list_path, false);
+            f.set_range(list_of_backups.Count);
+            f.ShowDialog();
+            if (f.get_look_only() == true) return;
+            BackUp bu = list_of_backups[f.get_selected_index()];
+            Form4 f1 = new Form4(bu);
+            f1.ShowDialog();
+            list_of_backups[f.get_selected_index()] = f1.GetBackUp();
+            SerializeBackUpInfo();
             ShowBackUpInfo();
         }
     }

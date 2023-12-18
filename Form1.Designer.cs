@@ -95,6 +95,11 @@ namespace WindowsFormsApp1
                 counter_of_backup++;
             }
 
+            public void zero_counter_of_backup()
+            {
+                counter_of_backup = 0;
+            }
+
             public int get_counter_of_backup()
             {
                 return counter_of_backup;
@@ -154,6 +159,7 @@ namespace WindowsFormsApp1
             this.button3.TabIndex = 10;
             this.button3.Text = "Восстановление";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label1
             // 
@@ -276,7 +282,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        private void CopyFolder(string sourse, string dest)
+        public void CopyFolder(string sourse, string dest)
         {
             string[] files = Directory.GetFiles(sourse);
             foreach (string file in files)

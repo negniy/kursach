@@ -65,17 +65,17 @@ namespace WindowsFormsApp1
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(16, 210);
+            this.button1.Location = new System.Drawing.Point(16, 242);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(222, 45);
             this.button1.TabIndex = 2;
-            this.button1.Text = "Выбрать бэкап";
+            this.button1.Text = "Выбрать бэкап и продолжить работу с ним";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(16, 261);
+            this.button2.Location = new System.Drawing.Point(16, 293);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(222, 45);
             this.button2.TabIndex = 3;
