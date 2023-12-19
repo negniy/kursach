@@ -307,7 +307,7 @@ namespace WindowsFormsApp1
             // проверка на существование
             list_of_backups.Add(bu);
             int index = list_of_backups.IndexOf(bu);
-            string path_to_folder = bu.get_destination_of_backup()+"\\BackUp_0_"+index.ToString();
+            string path_to_folder = bu.get_destination_of_backup()+"\\BackUp_"+index.ToString()+"_0";
             Directory.CreateDirectory(path_to_folder);
             list_of_backups[index].inc_counter_of_backup();
             CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
@@ -333,7 +333,7 @@ namespace WindowsFormsApp1
             int index = list_of_backups.IndexOf(bu);
             if (index == -1) return;
 
-            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_"+bu.get_counter_of_backup()+"_" + index.ToString();
+            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_"+ index.ToString() + "_" + bu.get_counter_of_backup();
             Directory.CreateDirectory(path_to_folder);
             list_of_backups[index].inc_counter_of_backup();
             CopyFolder(bu.get_sourse_of_backup(), path_to_folder);

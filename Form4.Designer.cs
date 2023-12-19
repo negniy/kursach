@@ -148,6 +148,7 @@ namespace WindowsFormsApp1
 
         #endregion
 
+        private int check_index;
         private string[] list_of_rk;
         private int selected_index;
         private WindowsFormsApp1.Form1.BackUp back;

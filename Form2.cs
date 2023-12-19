@@ -132,7 +132,12 @@ namespace WindowsFormsApp1
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Close();
+            if (path_from_create_backup == null || time_to_create_backup == null || path_to_create_backup == null)
+            {
+                MessageBox.Show("Все поля должны быть заполнены");
+                return;
+            }
+                Close();
         }
     }
 }

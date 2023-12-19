@@ -13,13 +13,16 @@ namespace WindowsFormsApp1
 {
     public partial class Form4 : Form
     {
-        public Form4(WindowsFormsApp1.Form1.BackUp bu)
+        public Form4(WindowsFormsApp1.Form1.BackUp bu, int i)
         {
             InitializeComponent();
             back = bu;
+            check_index = i;
             list_of_rk = null;
-            list_of_rk = Directory.GetDirectories(bu.get_destination_of_backup(), "BackUp_*");
+            string pattern = "BackUp_" + i.ToString() +"*";
+            list_of_rk = Directory.GetDirectories(bu.get_destination_of_backup(), pattern);
             Console.WriteLine(list_of_rk);
+            check_index = i;
         }
 
         private void ShowRKInfo() // просмотр информации о Рк

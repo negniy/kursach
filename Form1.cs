@@ -77,6 +77,7 @@ namespace WindowsFormsApp1
             Form2 f = new Form2(); // создаем новое окно
             f.ShowDialog(); // ждём выполнения
             BackUp bu = new BackUp();
+            if (f.get_path_from_create_backup() == null || f.get_time_to_create_backup() == null || f.get_path_to_create_backup() == null) return;
             bu.set_time_between_backup(f.get_time_to_create_backup());
             bu.set_time_of_last_backup(DateTime.Now);
             bu.set_sourse_of_backup(f.get_path_from_create_backup());
@@ -169,7 +170,7 @@ namespace WindowsFormsApp1
             f.ShowDialog();
             if (f.get_look_only() == true) return;
             BackUp bu = list_of_backups[f.get_selected_index()];
-            Form4 f1 = new Form4(bu);
+            Form4 f1 = new Form4(bu, f.get_selected_index());
             f1.ShowDialog();
             list_of_backups[f.get_selected_index()] = f1.GetBackUp();
             SerializeBackUpInfo();
