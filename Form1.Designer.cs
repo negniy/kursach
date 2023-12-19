@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -244,103 +240,6 @@ namespace WindowsFormsApp1
         }
 
         #endregion
-
-        private void SerializeBackUpInfo() // сериализует данные бэкапов в json
-        {
-            string path_to_app_dir = "C:\\BackUp_Application";
-            if (!Directory.Exists(path_to_app_dir))
-            {
-                Directory.CreateDirectory(path_to_app_dir);
-            }
-            string file_name = Path.Combine(path_to_app_dir, "BackUps.json");
-            var backup_data = JsonConvert.SerializeObject(list_of_backups, Formatting.Indented);
-            File.WriteAllText(file_name, backup_data);
-        }
-
-        private List<BackUp> DeserializeBackUpInfo() // десериализует данные бэкапов из json
-        {
-            string path_to_app_dir = "C:\\BackUp_Application";
-            string file_name = Path.Combine(path_to_app_dir, "BackUps.json");
-            if (!Directory.Exists(path_to_app_dir)||!File.Exists(file_name))
-            {
-                return null;
-            }
-            var json_data = File.ReadAllText(file_name);
-            List<BackUp> backup_data = JsonConvert.DeserializeObject<List<BackUp>>(json_data);
-            return backup_data;
-        }
-
-        private void ShowBackUpInfo() // вывод информации о бэкапах
-        {
-            textBox1.Text = " ";
-            int counter = 1;
-            if (list_of_backups == null) return;
-            foreach (BackUp bu in list_of_backups)
-            {
-                textBox1.Text += " " + counter.ToString() + ") " + "Источник данных: " + bu.get_sourse_of_backup() + " Расположение бэкапа: " + bu.get_destination_of_backup() + " Последнее копирование: " + bu.get_time_of_last_backup() + "\r\n";
-                counter++;
-            }
-        }
-
-        public void CopyFolder(string sourse, string dest)
-        {
-            string[] files = Directory.GetFiles(sourse);
-            foreach (string file in files)
-            {
-                File.Copy(file, Path.Combine(dest, Path.GetFileName(file)), true);
-            }
-            string[] folders = Directory.GetDirectories(sourse);
-            foreach (string folder in folders)
-            {
-                CopyFolder(folder, Path.Combine(dest, Path.GetFileName(folder)));
-            }
-        }
-
-        private void CreateBackUp(BackUp bu)
-        {
-            TimeSpan zero_time = new TimeSpan(0, 0, 0, 0);
-            if (bu.get_sourse_of_backup() == null || bu.get_destination_of_backup() == null || bu.get_time_between_backup() == zero_time)
-            {
-                //throw new Exception("No such a file or directory");
-            }
-
-            // проверка на существование
-            list_of_backups.Add(bu);
-            int index = list_of_backups.IndexOf(bu);
-            string path_to_folder = bu.get_destination_of_backup()+"\\BackUp_"+index.ToString()+"_0";
-            Directory.CreateDirectory(path_to_folder);
-            list_of_backups[index].inc_counter_of_backup();
-            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
-
-            MessageBox.Show("РК завершено");
-            SerializeBackUpInfo();
-
-        }
-
-        private void UpdateBackUp(BackUp bu)
-        {
-            int index = list_of_backups.IndexOf(bu);
-            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_" + bu.get_counter_of_backup().ToString() + "_" + index.ToString();
-            Directory.CreateDirectory(path_to_folder);
-            list_of_backups[index].inc_counter_of_backup();
-            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
-            list_of_backups[index].set_time_of_last_backup(DateTime.Now);
-            SerializeBackUpInfo();
-        }
-
-        private void RefreshBackUp(BackUp bu)
-        {
-            int index = list_of_backups.IndexOf(bu);
-            if (index == -1) return;
-
-            string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_"+ index.ToString() + "_" + bu.get_counter_of_backup();
-            Directory.CreateDirectory(path_to_folder);
-            list_of_backups[index].inc_counter_of_backup();
-            CopyFolder(bu.get_sourse_of_backup(), path_to_folder);
-            MessageBox.Show(index.ToString());
-            list_of_backups[index].set_time_of_last_backup(DateTime.Now);
-            SerializeBackUpInfo();
-        }
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button3;
