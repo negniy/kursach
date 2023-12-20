@@ -28,8 +28,8 @@ namespace WindowsFormsApp1
                 {
                     foreach (BackUp bu in list_of_backups)
                     {
-                        var last_modified = DateTime.Now;// File.GetLastWriteTime(bu.get_sourse_of_backup());
-                        var variance = last_modified.Subtract(bu.get_time_of_last_backup());
+                        var now = DateTime.Now;
+                        var variance = now.Subtract(bu.get_time_of_last_backup());
                         var result = TimeSpan.Compare(variance, bu.get_time_between_backup());
                         if (result >= 0)
                         {
@@ -106,7 +106,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        public void CopyFolder(string sourse, string dest)
+        private void CopyFolder(string sourse, string dest)
         {
             string[] files = Directory.GetFiles(sourse);
             foreach (string file in files)
@@ -123,13 +123,6 @@ namespace WindowsFormsApp1
 
         private void CreateBackUp(BackUp bu)
         {
-            TimeSpan zero_time = new TimeSpan(0, 0, 0, 0);
-            if (bu.get_sourse_of_backup() == null || bu.get_destination_of_backup() == null || bu.get_time_between_backup() == zero_time)
-            {
-                //throw new Exception("No such a file or directory");
-            }
-
-            // проверка на существование
             list_of_backups.Add(bu);
             int index = list_of_backups.IndexOf(bu);
             string path_to_folder = bu.get_destination_of_backup() + "\\BackUp_" + index.ToString() + "_0";

@@ -241,8 +241,8 @@ namespace WindowsFormsApp1
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
+        private Button button1;
+        private Button button3;
         private Label label1;
         private TextBox textBox1;
         private List<BackUp> list_of_backups;

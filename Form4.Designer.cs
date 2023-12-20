@@ -144,13 +144,13 @@ namespace WindowsFormsApp1
         private string[] list_of_rk;
         private int selected_index;
         private WindowsFormsApp1.Form1.BackUp back;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label label2;
+        private Button button4;
+        private Button button2;
+        private TextBox textBox1;
+        private Label label1;
+        private Button button3;
+        private ComboBox comboBox1;
+        private Label label2;
         private Button button1;
     }
 }

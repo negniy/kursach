@@ -15,7 +15,6 @@ namespace WindowsFormsApp1
             string pattern = "BackUp_" + i.ToString() +"*";
             list_of_rk = Directory.GetDirectories(bu.get_destination_of_backup(), pattern);
             Console.WriteLine(list_of_rk);
-            check_index = i;
         }
 
         private void ShowRKInfo() // просмотр информации о Рк
@@ -30,7 +29,7 @@ namespace WindowsFormsApp1
             }
         }
 
-        public void CopyFolder(string sourse, string dest)
+        private void CopyFolder(string sourse, string dest)
         {
             string[] files = Directory.GetFiles(sourse);
             foreach (string file in files)
@@ -40,6 +39,7 @@ namespace WindowsFormsApp1
             string[] folders = Directory.GetDirectories(sourse);
             foreach (string folder in folders)
             {
+                Directory.CreateDirectory(Path.Combine(dest, Path.GetFileName(folder)));
                 CopyFolder(folder, Path.Combine(dest, Path.GetFileName(folder)));
             }
         }

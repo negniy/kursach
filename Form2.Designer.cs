@@ -162,12 +162,12 @@ namespace WindowsFormsApp1
         private string path_to_create_backup;
         private TimeSpan time_to_create_backup;
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private Label label1;
+        private Button button1;
+        private Button button2;
+        private Label label2;
+        private Label label3;
+        private ComboBox comboBox1;
         private TextBox textBox1;
         private TextBox textBox2;
         private TextBox textBox3;
