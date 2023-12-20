@@ -149,7 +149,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Name = "Form2";
-            this.Text = "Работа с РК";
+            this.Text = "Работа с бэкапом";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

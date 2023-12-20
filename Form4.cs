@@ -46,6 +46,7 @@ namespace WindowsFormsApp1
 
         private void Regain() // восстановление
         {
+            if (list_of_rk == null) return;
             CopyFolder(list_of_rk[selected_index], back.get_sourse_of_backup());
         }
 
@@ -88,6 +89,8 @@ namespace WindowsFormsApp1
             DeleteRK();
             MessageBox.Show("Удаление выбранной копии успешно завершено");
             ShowRKInfo();
+            comboBox1.Items.RemoveAt(list_of_rk.Length);
+            selected_index = -1;
         }
 
         private void button4_Click(object sender, EventArgs e) // удаление всех копий
@@ -101,6 +104,8 @@ namespace WindowsFormsApp1
             back.zero_counter_of_backup();
             MessageBox.Show("Удаление всех копий успешно завершено");
             ShowRKInfo();
+            selected_index = -1;
+            comboBox1.Items.Clear();
         }
 
         public WindowsFormsApp1.Form1.BackUp GetBackUp()
